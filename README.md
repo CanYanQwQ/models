@@ -2,6 +2,12 @@
 
 Sub2API 站的模型价目表。**价格全部硬编码在 `src/data/catalog.ts`**，不请求任何接口。
 
+![浅色主题](docs/light-top.png)
+
+| 深色主题 | 移动端 |
+| --- | --- |
+| ![深色主题](docs/dark-top.png) | ![移动端](docs/mobile.png) |
+
 ## 为什么硬编码
 
 官方 `/model-plaza` 只有一个开关 `model_plaza_enabled`：关掉它就同时关掉入口和接口
