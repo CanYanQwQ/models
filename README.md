@@ -151,3 +151,14 @@ npm run fonts            # 读 src/ 与 index.html，重写 public/fonts/*.woff2
 
 纸 + 墨 + 单一 teal 强调色；分隔只用发丝线，**全站零渐变、零阴影、零 emoji**；
 图标一律来自 `lucide-react`，示意图形用手写内联 SVG。深色主题只换令牌，不换版式。
+
+`lucide-react` 里没有能代表这一个页面的图标，所以标题前的标记是自绘的：一个圆角方框里
+三行发丝线，右下角一格填实——「一张表里被标出来的价格列」。同一套图形有三个落点：
+
+| 文件 | 用途 |
+| --- | --- |
+| `src/components/Mark.tsx` | 页面内的标记，`currentColor` 跟随主题（浅色 `#0a7a6e`，深色 `#2ec2b0`），18px |
+| `public/favicon.svg` | 浏览器标签页图标，实心 teal 徽章 + 反白图形，16px 下仍可辨 |
+| `public/mark.svg` | 独立的矢量文件，给 README、PPT 或别处直接引用（固定 teal） |
+
+改图形时三处要一起改：`<img>` 引用拿不到 `currentColor`，`mark.svg` 必须写死颜色。
