@@ -1,9 +1,13 @@
 import { ArrowUpRight } from 'lucide-react'
 import { UPDATED_AT } from '../data/catalog'
+import { isEmbedded } from '../lib/embed'
 import { siteHost, siteOrigin } from '../lib/site'
 
 export function Footer() {
   const site = siteOrigin()
+  // Embedded, the host page is one click away anyway — and a "back to site"
+  // link here would navigate the top frame out of the host's overlay.
+  const embedded = isEmbedded()
 
   return (
     <footer className="mt-12 border-t border-rule">
@@ -17,19 +21,21 @@ export function Footer() {
           <p className="num pt-1">更新于 {UPDATED_AT}</p>
         </div>
 
-        <a
-          href={site}
-          target="_top"
-          className="group inline-flex items-center gap-1.5 self-start text-[12.5px] font-medium text-ink-2 transition-colors hover:text-ink sm:self-auto"
-        >
-          <span className="font-mono text-[12px]">{siteHost(site)}</span>
-          <ArrowUpRight
-            size={13}
-            strokeWidth={2}
-            aria-hidden="true"
-            className="transition-transform group-hover:-translate-y-px group-hover:translate-x-px"
-          />
-        </a>
+        {embedded ? null : (
+          <a
+            href={site}
+            target="_top"
+            className="group inline-flex items-center gap-1.5 self-start text-[12.5px] font-medium text-ink-2 transition-colors hover:text-ink sm:self-auto"
+          >
+            <span className="font-mono text-[12px]">{siteHost(site)}</span>
+            <ArrowUpRight
+              size={13}
+              strokeWidth={2}
+              aria-hidden="true"
+              className="transition-transform group-hover:-translate-y-px group-hover:translate-x-px"
+            />
+          </a>
+        )}
       </div>
     </footer>
   )
