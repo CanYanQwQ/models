@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="模型广场：可用模型、上下文档位与实付价格一览。"
+    />
+    <title>模型广场</title>
+    <link
+      rel="preload"
+      href="/fonts/noto-sans-sc-plaza-600.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <script>
+      // Resolve the theme before first paint: an explicit ?theme= wins (the
+      // Sub2API custom page forwards the parent's theme), then a previous
+      // choice, then the OS preference.
+      ;(function () {
+        try {
+          var query = new URLSearchParams(location.search).get('theme')
+          var stored = localStorage.getItem('sub2api-plaza:theme')
+          var theme =
+            query === 'dark' || query === 'light'
+              ? query
+              : stored === 'dark' || stored === 'light'
+                ? stored
+                : window.matchMedia('(prefers-color-scheme: dark)').matches
+                  ? 'dark'
+                  : 'light'
+          document.documentElement.dataset.theme = theme
+          // Paint the page surface before the stylesheet lands, so a dark-theme
+          // visitor never sees a white flash.
+          document.documentElement.style.backgroundColor =
+            theme === 'dark' ? '#080d0c' : '#f4f5f2'
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,138 @@
+/* ------------------------------------------------------------------ *
+ * Model plaza — a printed tariff sheet, not a card wall.
+ *
+ * Palette is paper + ink with a single teal accent, used only where it
+ * carries meaning (a verified rate, a free model, a link). No gradients,
+ * anywhere, and no decorative shadow: separation comes from hairline rules.
+ * ------------------------------------------------------------------ */
+
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  --c-paper: #f4f5f2;
+  --c-sheet: #fdfdfb;
+  --c-soft: #eef0ec;
+  --c-ink: #0c1413;
+  --c-ink-2: #46534f;
+  --c-ink-3: #5d6b68;
+  --c-rule: #d7dcd7;
+  --c-rule-strong: #bcc4be;
+  --c-accent: #0a7a6e;
+  --c-accent-ink: #075c54;
+  --c-accent-wash: #e3f0ec;
+}
+
+[data-theme='dark'] {
+  --c-paper: #080d0c;
+  --c-sheet: #0d1413;
+  --c-soft: #111917;
+  --c-ink: #e9efec;
+  --c-ink-2: #a7b4b0;
+  --c-ink-3: #7b8a87;
+  --c-rule: #26312f;
+  --c-rule-strong: #384744;
+  --c-accent: #2ec2b0;
+  --c-accent-ink: #6ce0d1;
+  --c-accent-wash: #0c2a27;
+}
+
+@theme inline {
+  --color-paper: var(--c-paper);
+  --color-sheet: var(--c-sheet);
+  --color-soft: var(--c-soft);
+  --color-ink: var(--c-ink);
+  --color-ink-2: var(--c-ink-2);
+  --color-ink-3: var(--c-ink-3);
+  --color-rule: var(--c-rule);
+  --color-rule-strong: var(--c-rule-strong);
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-accent-wash: var(--c-accent-wash);
+
+  --font-sans: 'Space Grotesk Variable', 'Sheet Display SC', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Noto Sans SC (SIL OFL 1.1) cut down to the CJK glyphs this page sets — see
+   scripts/subset-font.py. Latin is left to Space Grotesk, so the face is only
+   reached for Chinese. */
+@font-face {
+  font-family: 'Sheet Display SC';
+  src: url('/fonts/noto-sans-sc-plaza-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+3000-303f, U+3040-30ff, U+3400-4dbf, U+4e00-9fff, U+f900-faff,
+    U+ff00-ffef;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--c-rule-strong) transparent;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--c-paper);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01' 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* CJK glyphs sit optically larger than Latin at the same size, so the
+     headings get their tracking and leading corrected when Chinese is set. */
+  :lang(zh) h1 {
+    letter-spacing: -0.012em;
+    line-height: 1.16;
+  }
+
+  :lang(zh) h2 {
+    letter-spacing: -0.006em;
+    line-height: 1.3;
+  }
+
+  ::selection {
+    background: var(--c-accent-wash);
+    color: var(--c-accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+}
+
+@layer components {
+  /* Prices are read down a column, so the digits must not wobble row to row. */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'zero' 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* Dark-mode hairlines read heavier than light-mode ones at the same alpha. */
+  [data-theme='dark'] .hairline {
+    border-color: var(--c-rule);
+  }
+}
