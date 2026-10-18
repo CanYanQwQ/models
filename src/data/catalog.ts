@@ -11,14 +11,14 @@
  * Prices are the channel's own per-token USD price. The price you actually
  * sell at is that value multiplied by `rateMultiplier` — see lib/pricing.ts,
  * which mirrors PlazaModelPricingTable.vue:424 in Sub2API 0.2.17. Tier labels
- * (`≤272K` / `>272K`, `1K` / `2K` / `4K`) are the API's own `tier_label`
- * strings. Group 16 bills long context per whole request
- * (`long_context_basis: 'whole_request'`), so the higher tier applies to the
- * entire request once it crosses 272K.
+ * (`≤272K` / `>272K`, `≤200K` / `>200K`, `1K` / `2K` / `4K`) are the API's own
+ * `tier_label` strings. Where the channel bills long context per whole request
+ * (`long_context_basis: 'whole_request'`), the higher tier applies to the
+ * entire request once it crosses the threshold.
  *
  * `label` and `note` are presentation copy, written by hand: the API only
- * carries the slug, and its `platform` is the channel's protocol family (every
- * group reports `openai`), which says nothing about who makes the model.
+ * carries the slug, and its `platform` is the channel's protocol family
+ * (`openai` or `anthropic`), which says nothing about who makes the model.
  * ------------------------------------------------------------------ */
 
 export type GroupKind = 'chat' | 'image' | 'free'
@@ -46,12 +46,11 @@ export interface PlazaGroup {
   id: number
   name: string
   /**
-   * Channel protocol family, straight from the API's `platform`. Every group on
-   * this instance reports `openai`, so this row has a single real option today;
-   * the filter still draws it, because the four-row block is the shape the
-   * official plaza uses. Channel pricing disagrees with the official price often
-   * enough that `rateMultiplier` cannot be trusted as a discount rate on its own
-   * — see `rateVerified`.
+   * Channel protocol family, straight from the API's `platform` — `openai` or
+   * `anthropic` on this instance. The filter draws it as a row of chips, the
+   * same shape the official plaza uses. Channel pricing disagrees with the
+   * official price often enough that `rateMultiplier` cannot be trusted as a
+   * discount rate on its own — see `rateVerified`.
    */
   platform: string
   description: string
@@ -73,6 +72,93 @@ export interface PlazaGroup {
 export const UPDATED_AT = '2026-10-18'
 
 export const GROUPS: PlazaGroup[] = [
+  {
+    id: 17,
+    name: 'CLAUDE稳定分组',
+    platform: 'anthropic',
+    description: 'Anthropic 全线，按 token 计费，除 Sonnet 4.5 外都不分档',
+    rule: '只有 Claude Sonnet 4.5 分档：请求超过 200K tokens 后，整单按 >200K 档计价。',
+    kind: 'chat',
+    rateMultiplier: 0.1,
+    rateVerified: true,
+    models: [
+      {
+        name: 'claude-fable-5-1',
+        label: 'Claude Fable 5.1',
+        note: '组内最贵的一档，输出价是 Opus 的两倍。',
+        tiers: [{ label: '', input: 1e-5, output: 5e-5, cacheRead: 2.5e-7 }],
+      },
+      {
+        name: 'claude-haiku-4-5-20251001',
+        label: 'Claude Haiku 4.5',
+        note: '组内最便宜，适合轻量调用。',
+        tiers: [{ label: '', input: 1e-6, output: 5e-6, cacheRead: 1e-7 }],
+      },
+      {
+        name: 'claude-opus-4-5-20251101',
+        label: 'Claude Opus 4.5',
+        note: 'Opus 4.5 到 Opus 5 五版同价，缓存读 $0.05 / 1M。',
+        tiers: [{ label: '', input: 5e-6, output: 2.5e-5, cacheRead: 5e-7 }],
+      },
+      {
+        name: 'claude-opus-4-6',
+        label: 'Claude Opus 4.6',
+        note: '与 Opus 4.5 同价同档。',
+        tiers: [{ label: '', input: 5e-6, output: 2.5e-5, cacheRead: 5e-7 }],
+      },
+      {
+        name: 'claude-opus-4-7',
+        label: 'Claude Opus 4.7',
+        note: '与 Opus 4.5 同价同档。',
+        tiers: [{ label: '', input: 5e-6, output: 2.5e-5, cacheRead: 5e-7 }],
+      },
+      {
+        name: 'claude-opus-4-8',
+        label: 'Claude Opus 4.8',
+        note: '与 Opus 4.5 同价同档。',
+        tiers: [{ label: '', input: 5e-6, output: 2.5e-5, cacheRead: 5e-7 }],
+      },
+      {
+        name: 'claude-opus-5',
+        label: 'Claude Opus 5',
+        note: '与 Opus 4.5 同价同档。',
+        tiers: [{ label: '', input: 5e-6, output: 2.5e-5, cacheRead: 5e-7 }],
+      },
+      {
+        name: 'claude-opus-5-5',
+        label: 'Claude Opus 5.5',
+        note: '比前几代 Opus 便宜两成，缓存读 $0.02 / 1M。',
+        tiers: [{ label: '', input: 4e-6, output: 2e-5, cacheRead: 2e-7 }],
+      },
+      {
+        name: 'claude-sonnet-4-5-20250929',
+        label: 'Claude Sonnet 4.5',
+        note: '组内唯一分档，超过 200K 后整单按高档计价。',
+        tiers: [
+          { label: '≤200K', input: 3e-6, output: 1.5e-5, cacheRead: 3e-7 },
+          { label: '>200K', input: 6e-6, output: 2.25e-5, cacheRead: 6e-7 },
+        ],
+      },
+      {
+        name: 'claude-sonnet-4-6',
+        label: 'Claude Sonnet 4.6',
+        note: '与 Sonnet 4.5 同价，但只有一档。',
+        tiers: [{ label: '', input: 3e-6, output: 1.5e-5, cacheRead: 3e-7 }],
+      },
+      {
+        name: 'claude-sonnet-5',
+        label: 'Claude Sonnet 5',
+        note: 'Sonnet 里最便宜的一档。',
+        tiers: [{ label: '', input: 2e-6, output: 1e-5, cacheRead: 2e-7 }],
+      },
+      {
+        name: 'claude-sonnet-5-5',
+        label: 'Claude Sonnet 5.5',
+        note: '与 Sonnet 5 同价同档。',
+        tiers: [{ label: '', input: 2e-6, output: 1e-5, cacheRead: 2e-7 }],
+      },
+    ],
+  },
   {
     id: 16,
     name: 'ChatGPT-ProMax【满血】',
