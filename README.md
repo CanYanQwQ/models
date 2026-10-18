@@ -153,12 +153,17 @@ npm run fonts            # 读 src/ 与 index.html，重写 public/fonts/*.woff2
 图标一律来自 `lucide-react`，示意图形用手写内联 SVG。深色主题只换令牌，不换版式。
 
 `lucide-react` 里没有能代表这一个页面的图标，所以标题前的标记是自绘的：一个圆角方框里
-三行发丝线，右下角一格填实——「一张表里被标出来的价格列」。同一套图形有三个落点：
+三行发丝线，右下角一格填实——「一张表里被标出来的价格列」。
+
+标记是**单色**的，只用墨色，不参与 teal 强调（强调色留给免费价与倍率徽章）。同一个几何
+有五个文件，按背景深浅与是否有彩色选用：
 
 | 文件 | 用途 |
 | --- | --- |
-| `src/components/Mark.tsx` | 页面内的标记，`currentColor` 跟随主题（浅色 `#0a7a6e`，深色 `#2ec2b0`），18px |
-| `public/favicon.svg` | 浏览器标签页图标，实心 teal 徽章 + 反白图形，16px 下仍可辨 |
-| `public/mark.svg` | 独立的矢量文件，给 README、PPT 或别处直接引用（固定 teal） |
+| `src/components/Mark.tsx` | 页面内的标记，18px，`currentColor`——浅色主题 `#0c1413`，深色 `#e9efec` |
+| `public/favicon-mono.svg` | **当前使用**的标签页图标：黑底白图形，16px 下仍可辨 |
+| `public/mark-mono.svg` | 独立矢量文件，纯黑，给白底场合（README、文档、PPT） |
+| `public/mark-mono-inverse.svg` | 独立矢量文件，纯白，给深底或照片上叠放 |
+| `public/favicon.svg`、`public/mark.svg` | 早先的 teal 版，保留备用；页面已不引用 |
 
-改图形时三处要一起改：`<img>` 引用拿不到 `currentColor`，`mark.svg` 必须写死颜色。
+改图形时这几处要一起改：`<img>` 引用拿不到 `currentColor`，独立文件必须写死颜色。

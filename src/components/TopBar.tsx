@@ -9,7 +9,7 @@ export function TopBar() {
     <header className="sticky top-0 z-30 border-b border-rule bg-paper">
       <div className="mx-auto flex h-14 max-w-[1120px] items-center justify-between gap-4 px-5 sm:px-8">
         <div className="flex min-w-0 items-center gap-2.5">
-          <Mark className="h-[18px] w-[18px] shrink-0 text-accent" />
+          <Mark className="h-[18px] w-[18px] shrink-0 text-ink" />
           <span className="truncate text-[13.5px] font-semibold tracking-tight text-ink">
             模型广场
           </span>
