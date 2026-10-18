@@ -124,6 +124,19 @@ npm run preview    # 预览构建产物
 `document.referrer` 的 origin 推导（iframe 由主站同源页面发起，所以能拿到），
 推导失败时回退到 `src/lib/site.ts` 里的常量。
 
+### 被别人的浮层框住时：`?embed=1`
+
+首页（`pages.zhouwanx.top`）把这份价目表当作整屏浮层打开，浮层自己有一条标题栏和关闭
+按钮。这时再加一条本页的顶栏、「返回站点」链接，就是两层导航叠在一起。带上
+`?embed=1` 会：
+
+- 隐藏本页顶栏（`src/components/TopBar.tsx` 直接返回 `null`）；
+- 隐藏页脚的「返回站点」外链（避免把外层宿主整页导航走）；
+- 把分组吸顶头的偏移从 `top-14` 改成 `top-0`，因为那条 56px 是给本页顶栏留的。
+
+宿主通过 `src/components/PriceOverlay.tsx` 里的 `embedUrl()` 拼这个参数，同时把当前
+主题一并带上（浮层里的 iframe 读不到宿主的 `data-theme`）。
+
 主题优先级：`?theme=` → `localStorage['sub2api-plaza:theme']` → `prefers-color-scheme`，
 在 `index.html` 的首屏内联脚本里就定下来，不会闪。
 
