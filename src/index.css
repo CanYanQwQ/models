@@ -1,9 +1,11 @@
 /* ------------------------------------------------------------------ *
- * Model plaza — a printed tariff sheet, not a card wall.
+ * Model plaza — a printed tariff sheet, one card per model.
  *
  * Palette is paper + ink with a single teal accent, used only where it
  * carries meaning (a verified rate, a free model, a link). No gradients,
  * anywhere, and no decorative shadow: separation comes from hairline rules.
+ * A card is a sheet of the same stock — square, rule-framed, sitting flat on
+ * the paper — so the grid reads as a ruled table, not as a wall of panels.
  * ------------------------------------------------------------------ */
 
 @import 'tailwindcss';

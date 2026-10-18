@@ -1,7 +1,7 @@
 import { Percent } from 'lucide-react'
 import type { PlazaGroup } from '../data/catalog'
 import { priceRange, rateLabel } from '../lib/pricing'
-import { ModelBlock } from './ModelBlock'
+import { ModelCard } from './ModelCard'
 
 /**
  * One group of models. The header sticks under the top bar from small screens
@@ -10,13 +10,20 @@ import { ModelBlock } from './ModelBlock'
  * carries answers "what does this group cost" without scrolling back up. On a
  * phone the description wraps tall enough that a pinned header would eat the
  * viewport, so it scrolls normally there.
+ *
+ * The models below it are cards, three to a row on a desktop. Each group keeps
+ * its own grid, so a group whose model count is not a multiple of three leaves
+ * empty cells at the end of its last row. Letting cards flow across group
+ * boundaries would fill those cells, but it would also put two groups on one
+ * row, and the rate badge in the header — which applies to a whole group —
+ * would no longer be clear about which cards it covers.
  */
 export function GroupSection({ group }: { group: PlazaGroup }) {
   const showRate = group.rateVerified && group.rateMultiplier !== 1
 
   return (
     <section id={`g${group.id}`} className="border-t border-rule">
-      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 bg-paper pt-8 pb-3 sm:sticky sm:top-14 sm:z-10">
+      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 bg-paper pt-8 pb-4 sm:sticky sm:top-14 sm:z-10">
         <div className="min-w-0">
           <h2 className="text-[15px] font-semibold tracking-[-0.006em] text-ink">{group.name}</h2>
           {group.description ? (
@@ -43,9 +50,9 @@ export function GroupSection({ group }: { group: PlazaGroup }) {
         </div>
       </header>
 
-      <div className="divide-y divide-rule/60">
+      <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
         {group.models.map((model) => (
-          <ModelBlock key={model.name} group={group} model={model} />
+          <ModelCard key={model.name} group={group} model={model} />
         ))}
       </div>
     </section>

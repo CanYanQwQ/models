@@ -73,8 +73,12 @@ export function priceBlock(model: PlazaModel, rate: number, kind: GroupKind): Pr
 
   if (kind === 'free') {
     // Three cells rather than one wide "免费": the row keeps the same rhythm as
-    // every other block, and the three labels say what is being zeroed.
-    return { cells: ['输入', '输出', '缓存读'].map((label) => ({ value: '$0', label })) }
+    // every other block, and the three labels say what is being zeroed. The
+    // unit is carried too, so a free card reads like a chat card with the
+    // figures taken out rather than like a differently built card.
+    return {
+      cells: ['输入', '输出', '缓存读'].map((label) => ({ value: '$0', unit: '/ 1M', label })),
+    }
   }
 
   if (kind === 'image') {
