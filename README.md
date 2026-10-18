@@ -80,19 +80,31 @@ Sub2API 站的模型价目表。**价格全部硬编码在 `src/data/catalog.ts`
 
 新增分组或模型后要重跑 `npm run fonts`（页面上会出现新的汉字）。
 
+## 本地开发
+
+```bash
+npm ci
+npm run dev        # http://127.0.0.1:5173
+npm run build      # tsc --noEmit && vite build
+npm run preview    # 预览构建产物
+```
+
 ## 部署到 Vercel
 
-同一个仓库可以开第二个 Vercel 项目，Root Directory 指向 `plaza/`：
+本仓库根目录就是项目根目录。导入后按下表设置即可：
 
 | 项 | 值 |
 | --- | --- |
 | Framework Preset | Vite |
-| Root Directory | `plaza` |
+| Root Directory | `./`（默认；从 `sub2api-pages` 仓库导入时填 `plaza`） |
 | Build Command | `npm run build`（即 `tsc --noEmit && vite build`） |
 | Output Directory | `dist` |
 | Install Command | `npm ci`（`package-lock.json` 已在仓库里） |
 
-构建产物是纯静态文件，无需任何环境变量。
+构建产物是纯静态文件，无需任何环境变量。这份代码同时存在于两个仓库：独立仓库
+[`CanYanQwQ/models`](https://github.com/CanYanQwQ/models) 与
+[`CanYanQwQ/sub2api-pages`](https://github.com/CanYanQwQ/sub2api-pages) 的 `plaza/` 子目录，
+改价时只改一处，别两边各改一遍。
 
 ## 接进 Sub2API
 

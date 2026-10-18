@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Rebuild the CJK display subsets shipped in plaza/public/fonts/.
+"""Rebuild the CJK display subsets shipped in public/fonts/.
 
 The faces cover only the characters this page actually sets, which takes
 Noto Sans SC from ~17 MB to ~20 kB per weight. Two weights ship: 400 for
 running text and 600 for headings, because a single 600 face would set every
 Chinese paragraph heavier than the Space Grotesk running beside it.
 
-Run this after editing any copy in plaza/src/ or plaza/index.html, otherwise
+Run this after editing any copy in src/ or index.html, otherwise
 newly added characters fall back to a system CJK face and the page mixes two
 designs mid-sentence.
 
-    cd plaza && python scripts/subset-font.py
+    python scripts/subset-font.py
 
 Requires: pip install fonttools brotli
 Source font: https://github.com/google/fonts/tree/main/ofl/notosanssc
