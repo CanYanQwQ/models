@@ -47,8 +47,11 @@ export interface PlazaGroup {
   name: string
   /**
    * Channel protocol family, straight from the API's `platform`. Every group on
-   * this instance reports `openai`, so the platform row has a single option and
-   * is hidden until a second family shows up.
+   * this instance reports `openai`, so this row has a single real option today;
+   * the filter still draws it, because the four-row block is the shape the
+   * official plaza uses. Channel pricing disagrees with the official price often
+   * enough that `rateMultiplier` cannot be trusted as a discount rate on its own
+   * — see `rateVerified`.
    */
   platform: string
   description: string
