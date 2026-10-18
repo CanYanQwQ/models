@@ -1,16 +1,11 @@
 import { ArrowUpRight, Moon, Sun } from 'lucide-react'
 import { Mark } from './Mark'
-import { isEmbedded } from '../lib/embed'
 import { siteOrigin } from '../lib/site'
 import { useTheme } from '../lib/theme'
 
 export function TopBar() {
   const { theme, toggle } = useTheme()
   const site = siteOrigin()
-
-  // Hooks run before the branch so the hook order stays stable; when the sheet
-  // is embedded, the host page owns the header and this one steps aside.
-  if (isEmbedded()) return null
 
   return (
     <header className="sticky top-0 z-30 border-b border-rule bg-paper">

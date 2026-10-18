@@ -1,6 +1,5 @@
 import { Percent } from 'lucide-react'
 import type { PlazaGroup } from '../data/catalog'
-import { isEmbedded } from '../lib/embed'
 import { priceRange, rateLabel } from '../lib/pricing'
 import { ModelCard } from './ModelCard'
 
@@ -27,15 +26,10 @@ import { ModelCard } from './ModelCard'
  */
 export function GroupSection({ group }: { group: PlazaGroup }) {
   const showRate = group.rateVerified && group.rateMultiplier !== 1
-  // Pinned under the top bar normally; embedded, the host's own header sits
-  // above this document, so a 56px offset would leave a band of dead space.
-  const stickyOffset = isEmbedded() ? 'sm:top-0' : 'sm:top-14'
 
   return (
     <section id={`g${group.id}`} className="border-t border-rule">
-      <header
-        className={`flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-rule bg-paper pt-8 pb-4 sm:sticky sm:z-10 ${stickyOffset}`}
-      >
+      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-rule bg-paper pt-8 pb-4 sm:sticky sm:top-14 sm:z-10">
         <div className="min-w-0">
           <h2 className="text-[15px] font-semibold tracking-[-0.006em] text-ink">{group.name}</h2>
           {group.description ? (
