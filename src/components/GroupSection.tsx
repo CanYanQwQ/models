@@ -11,6 +11,12 @@ import { ModelCard } from './ModelCard'
  * phone the description wraps tall enough that a pinned header would eat the
  * viewport, so it scrolls normally there.
  *
+ * The header closes with a hairline. Pinned, it is the rule the cards slide
+ * under — without it a card passing beneath the opaque header looks like it has
+ * lost its top border and is left hanging by its two side rules. At rest the
+ * same rule separates the header from the grid, which is why the grid starts
+ * 16px below it instead of touching it.
+ *
  * The models below it are cards, three to a row on a desktop. Each group keeps
  * its own grid, so a group whose model count is not a multiple of three leaves
  * empty cells at the end of its last row. Letting cards flow across group
@@ -23,7 +29,7 @@ export function GroupSection({ group }: { group: PlazaGroup }) {
 
   return (
     <section id={`g${group.id}`} className="border-t border-rule">
-      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 bg-paper pt-8 pb-4 sm:sticky sm:top-14 sm:z-10">
+      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-rule bg-paper pt-8 pb-4 sm:sticky sm:top-14 sm:z-10">
         <div className="min-w-0">
           <h2 className="text-[15px] font-semibold tracking-[-0.006em] text-ink">{group.name}</h2>
           {group.description ? (
@@ -50,7 +56,7 @@ export function GroupSection({ group }: { group: PlazaGroup }) {
         </div>
       </header>
 
-      <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-x-6 gap-y-5 pt-4 sm:grid-cols-2 lg:grid-cols-3">
         {group.models.map((model) => (
           <ModelCard key={model.name} group={group} model={model} />
         ))}
