@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SearchX } from 'lucide-react'
 import { GROUPS } from './data/catalog'
-import { closeHostOnEscape } from './lib/embed'
 import type { FilterState } from './lib/filters'
 import { EMPTY_FILTERS, visibleGroups } from './lib/filters'
 import { FilterBar } from './components/FilterBar'
@@ -21,10 +20,6 @@ export default function App() {
   function reset() {
     setState({ ...EMPTY_FILTERS, sort: state.sort })
   }
-
-  // Inside the host's overlay, Escape has to be forwarded: focus sits in this
-  // document as soon as the reader clicks a price row.
-  useEffect(() => closeHostOnEscape(), [])
 
   return (
     <div className="min-h-screen bg-paper">
