@@ -57,7 +57,18 @@
 
 /* Noto Sans SC (SIL OFL 1.1) cut down to the CJK glyphs this page sets — see
    scripts/subset-font.py. Latin is left to Space Grotesk, so the face is only
-   reached for Chinese. */
+   reached for Chinese. Two weights ship: 400 for running text, 600 for
+   headings. One face would set every Chinese paragraph at heading weight. */
+@font-face {
+  font-family: 'Sheet Display SC';
+  src: url('/fonts/noto-sans-sc-plaza-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+3000-303f, U+3040-30ff, U+3400-4dbf, U+4e00-9fff, U+f900-faff,
+    U+ff00-ffef;
+}
+
 @font-face {
   font-family: 'Sheet Display SC';
   src: url('/fonts/noto-sans-sc-plaza-600.woff2') format('woff2');

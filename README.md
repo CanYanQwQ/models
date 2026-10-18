@@ -19,15 +19,35 @@ Sub2API 站的模型价目表。**价格全部硬编码在 `src/data/catalog.ts`
 实付价 = 渠道单价 × 分组倍率，token 类再乘 1e6 换算成「每百万 tokens」；
 官方价不乘倍率，所以这个页面只显示实付价，不并列官方价。
 
+## 版式
+
+一页连续的价格清单，不分页、不加卡片、不做筛选。分组是唯一的层级：每个分组一条
+`border-t` 发丝线 + 组名 + 说明 + 右侧模型数与倍率徽章，组内每个模型一个横区块。
+
+每个模型区块三行：模型名（展示名 + mono slug）→ 一行说明 → 价格。价格固定三列
+（输入 / 输出 / 缓存读，生图是三个档位），数字用等宽字体，分档模型在数字下面多一行
+`>272K $1.70`。三列总宽限制在 832px 内，数字才聚得起来——铺满整个容器会让每列之间
+空出 300px 以上，读不成一行。
+
+中文段落用了 `break-keep`：默认的中文断行会把「每百万」拆成「每百 / 万」两行。
+
+分组的尾部（含生图、免费分组与页脚口径说明）：
+
+![下半页](docs/light-bottom.png)
+
 ## 改价
 
-只改 `src/data/catalog.ts` 里的 `GROUPS`。每个模型的价格填**渠道单价**（元 / token，
+只改 `src/data/catalog.ts` 里的 `GROUPS`。每个模型的价格填**渠道单价**（美元 / token，
 如 `5e-6`），不要填乘过倍率的结果——渲染时统一乘 `rateMultiplier`。
 生图模型填 `perImage`（每张的渠道单价），倍率同样由分组带。
 
 `rateVerified` 是「这个分组的标价是否等于官方价」的人工结论，只有为 `true` 时页面才
 显示倍率徽章（此时标价 × 倍率就是实付价，倍率有解释力）。若某分组的标价本身就偏离
 官方价，倍率乘出来会误导，就置 `false`，页面只列实付价。
+
+`label` 是给人看的名字（`GPT-5.6`），`name` 是要粘进代码的 slug（`gpt-5.6`），
+`note` 是那句中文说明。新增分组时若模型分档，`tiers` 按顺序给两档，`label` 写
+`≤272K` / `>272K`。
 
 ## 部署到 Vercel
 
@@ -39,7 +59,7 @@ Sub2API 站的模型价目表。**价格全部硬编码在 `src/data/catalog.ts`
 | Root Directory | `plaza` |
 | Build Command | `npm run build`（即 `tsc --noEmit && vite build`） |
 | Output Directory | `dist` |
-| Install Command | `npm ci`（仓库里没有 lockfile 时用 `npm install`） |
+| Install Command | `npm ci`（`package-lock.json` 已在仓库里） |
 
 构建产物是纯静态文件，无需任何环境变量。
 
@@ -59,8 +79,13 @@ Sub2API 站的模型价目表。**价格全部硬编码在 `src/data/catalog.ts`
 
 - 拉丁与数字：`@fontsource-variable/space-grotesk`、`@fontsource-variable/jetbrains-mono`，
   随构建打包，不依赖任何 CDN。
-- 中文标题：Noto Sans SC 子集，见 `public/fonts/noto-sans-sc-plaza-600.woff2`（SIL OFL 1.1，
-  许可证在 `public/fonts/OFL.txt`）。只保留了页面实际用到的字，约 21 KB。
+- 中文：Noto Sans SC 子集，两个字重各一个文件——`public/fonts/noto-sans-sc-plaza-400.woff2`
+  （22.7 kB，正文）与 `-600.woff2`（22.9 kB，标题）。只保留页面实际用到的 159 个字。
+  许可证见 `public/fonts/OFL.txt`（SIL OFL 1.1）。
+
+两个 `@font-face` 声明同一个 family、不同 `font-weight`，`unicode-range` 限制在 CJK 区段，
+拉丁字符仍然走 Space Grotesk。只声明一个 600 会让所有中文正文都渲染成半粗，和西文 400
+正文对不齐。
 
 改完中文文案后要重跑子集，否则新字会掉回系统字体：
 

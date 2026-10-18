@@ -6,15 +6,14 @@ export function Footer() {
   const site = siteOrigin()
 
   return (
-    <footer className="mt-14 border-t border-rule">
+    <footer className="mt-12 border-t border-rule">
       <div className="mx-auto flex max-w-[1120px] flex-col gap-5 px-5 py-8 sm:flex-row sm:items-end sm:justify-between sm:px-8">
         <div className="max-w-[62ch] space-y-1.5 text-[12px] leading-relaxed text-ink-3">
           <p>
-            价格为实付价：按 token 计费的模型分输入、输出、缓存读三项，单位为每 1M tokens；图片按张计费。
+            按 token 计费的模型分输入、输出、缓存读三项，单位为每 1M tokens；图片按张计费。分档模型首行按
+            ≤272K 计价，第二行按 &gt;272K 整单计价。
           </p>
-          <p>
-            倍率仅在该分组的标价与官方价一致时展示，此时标价 × 倍率即实付价；其余分组只列出实付价。
-          </p>
+          <p>倍率仅在该分组的标价与官方价一致时展示，其余分组只列出实付价。</p>
           <p className="num pt-1">更新于 {UPDATED_AT}</p>
         </div>
 

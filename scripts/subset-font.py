@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Rebuild the CJK display subset shipped in plaza/public/fonts/.
+"""Rebuild the CJK display subsets shipped in plaza/public/fonts/.
 
-The heading face covers only the characters this page actually sets, which
-takes Noto Sans SC from ~17 MB to ~90 kB. Run this after editing any copy in
-plaza/src/ or plaza/index.html, otherwise newly added characters fall back to
-the system CJK face and headings mix two designs.
+The faces cover only the characters this page actually sets, which takes
+Noto Sans SC from ~17 MB to ~20 kB per weight. Two weights ship: 400 for
+running text and 600 for headings, because a single 600 face would set every
+Chinese paragraph heavier than the Space Grotesk running beside it.
+
+Run this after editing any copy in plaza/src/ or plaza/index.html, otherwise
+newly added characters fall back to a system CJK face and the page mixes two
+designs mid-sentence.
 
     cd plaza && python scripts/subset-font.py
 
@@ -24,8 +28,8 @@ SOURCE_URL = (
     'https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssc/'
     'NotoSansSC%5Bwght%5D.ttf'
 )
-WEIGHT = 600
-OUTPUT = Path(__file__).resolve().parent.parent / 'public/fonts/noto-sans-sc-plaza-600.woff2'
+WEIGHTS = (400, 600)
+FONT_DIR = Path(__file__).resolve().parent.parent / 'public/fonts'
 
 # Every source that can end up as visible text.
 SCAN = ['src', 'index.html']
@@ -74,26 +78,28 @@ def main() -> int:
         print(f'downloading source face -> {source.name}')
         urllib.request.urlretrieve(SOURCE_URL, source)
 
-        pinned = tmp_dir / 'pinned.ttf'
-        subprocess.run(
-            [sys.executable, '-m', 'fontTools.varLib.instancer', str(source),
-             f'wght={WEIGHT}', '-o', str(pinned), '-q'],
-            check=True,
-        )
-
         text_file = tmp_dir / 'chars.txt'
         text_file.write_text(chars, encoding='utf-8')
 
-        OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run(
-            [sys.executable, '-m', 'fontTools.subset', str(pinned),
-             f'--text-file={text_file}', '--flavor=woff2',
-             f'--output-file={OUTPUT}', '--layout-features=*',
-             '--name-IDs=*', '--drop-tables=DSIG'],
-            check=True,
-        )
+        FONT_DIR.mkdir(parents=True, exist_ok=True)
+        for weight in WEIGHTS:
+            pinned = tmp_dir / f'pinned-{weight}.ttf'
+            subprocess.run(
+                [sys.executable, '-m', 'fontTools.varLib.instancer', str(source),
+                 f'wght={weight}', '-o', str(pinned), '-q'],
+                check=True,
+            )
 
-    print(f'{len(chars)} glyphs -> {OUTPUT} ({OUTPUT.stat().st_size / 1024:.1f} kB)')
+            output = FONT_DIR / f'noto-sans-sc-plaza-{weight}.woff2'
+            subprocess.run(
+                [sys.executable, '-m', 'fontTools.subset', str(pinned),
+                 f'--text-file={text_file}', '--flavor=woff2',
+                 f'--output-file={output}', '--layout-features=*',
+                 '--name-IDs=*', '--drop-tables=DSIG'],
+                check=True,
+            )
+            print(f'{len(chars)} glyphs -> {output.name} ({output.stat().st_size / 1024:.1f} kB)')
+
     return 0
 
 

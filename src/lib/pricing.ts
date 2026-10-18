@@ -1,4 +1,4 @@
-import type { PlazaGroup } from '../data/catalog'
+import type { GroupKind, PlazaModel } from '../data/catalog'
 
 const PER_MILLION = 1_000_000
 
@@ -34,27 +34,56 @@ export function rateLabel(rate: number): string {
   return String(rate)
 }
 
-/* ------------------------------ entry price ------------------------------ */
+/* -------------------------------- data cells ------------------------------ */
 
-function lowestUnitPrice(group: PlazaGroup): number {
-  const values = group.models.flatMap((model) =>
-    model.tiers
-      .map((tier) => (group.kind === 'image' ? tier.perImage : tier.input))
-      .filter((value): value is number => typeof value === 'number'),
-  )
-  return values.length > 0 ? Math.min(...values) : Number.POSITIVE_INFINITY
+/**
+ * One figure in a block's price row: the value you read first, an optional
+ * second line for the long-context tier, and the label underneath — the same
+ * three-line rhythm r4.codes/models uses for `$3 / ≈ $0.5 / Input`.
+ */
+export interface Cell {
+  value: string
+  /** Unit suffix set smaller beside the value, e.g. `/ 1M`. */
+  unit?: string
+  /** Secondary figure, already prefixed with its tier label. */
+  sub?: string
+  label: string
 }
 
-/** The cheapest thing in a group, at the price you actually pay. */
-export function entryPrice(group: PlazaGroup): { value: string; unit: string } {
-  const base = lowestUnitPrice(group)
-  if (!Number.isFinite(base)) return { value: '—', unit: '' }
+/**
+ * The prices a customer pays, per tier. Tiered models show the base tier as
+ * the headline figure and the long-context tier on the second line, because
+ * Sub2API bills that tier per whole request — quoting one blended number would
+ * understate the bill.
+ */
+export function priceCells(model: PlazaModel, rate: number, kind: GroupKind): Cell[] {
+  const base = model.tiers[0]
+  if (!base) return []
 
-  if (group.kind === 'image') {
-    return { value: usd(base * group.rateMultiplier), unit: '/ 张' }
+  if (kind === 'free') {
+    // Three cells rather than one wide "免费": the row keeps the same rhythm as
+    // every other block, and the three labels say what is being zeroed.
+    return ['输入', '输出', '缓存读'].map((label) => ({ value: '$0', label }))
   }
-  if (base === 0) {
-    return { value: '免费', unit: '' }
+
+  if (kind === 'image') {
+    return model.tiers.map((tier) => ({
+      value: perRequest(tier.perImage, rate),
+      unit: '/ 张',
+      label: tier.label,
+    }))
   }
-  return { value: usd(base * PER_MILLION * group.rateMultiplier), unit: '/ 1M' }
+
+  const long = model.tiers[1]
+  const line = (label: string, key: 'input' | 'output' | 'cacheRead'): Cell => {
+    const sub = long?.[key]
+    return {
+      value: perMillion(base[key], rate),
+      unit: '/ 1M',
+      sub: sub === undefined ? undefined : `${long?.label ?? '长上下文'} ${perMillion(sub, rate)}`,
+      label,
+    }
+  }
+
+  return [line('输入', 'input'), line('输出', 'output'), line('缓存读', 'cacheRead')]
 }
