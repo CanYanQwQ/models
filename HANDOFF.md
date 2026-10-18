@@ -57,7 +57,7 @@ npm run fonts     # 改过中文文案后重跑（见第 7 节）
 │  │  ├─ site.ts           从 document.referrer 推导主站 origin
 │  │  └─ theme.ts          light/dark 切换，写 localStorage
 │  └─ components/
-│     ├─ TopBar.tsx        标记 + 标题 + 主题开关 + 返回站点
+│     ├─ TopBar.tsx        标记 + 标题 + 主题开关
 │     ├─ Hero.tsx          h1 + 两行说明
 │     ├─ FilterBar.tsx     四行分面（平台/分组/倍率/模型名）
 │     ├─ ListToolbar.tsx   「共 N 个模型」+ 排序开关

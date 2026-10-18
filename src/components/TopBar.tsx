@@ -1,11 +1,9 @@
-import { ArrowUpRight, Moon, Sun } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
 import { Mark } from './Mark'
-import { siteOrigin } from '../lib/site'
 import { useTheme } from '../lib/theme'
 
 export function TopBar() {
   const { theme, toggle } = useTheme()
-  const site = siteOrigin()
 
   return (
     <header className="sticky top-0 z-30 border-b border-rule bg-paper">
@@ -31,22 +29,6 @@ export function TopBar() {
               <Moon size={15} strokeWidth={1.8} aria-hidden="true" />
             )}
           </button>
-
-          <a
-            href={site}
-            target="_top"
-            aria-label="返回站点"
-            className="group inline-flex h-8 items-center gap-1.5 border border-rule px-2.5 text-[12.5px] font-medium text-ink-2 transition-colors hover:border-rule-strong hover:text-ink"
-          >
-            <span className="sm:hidden">站点</span>
-            <span className="hidden sm:inline">返回站点</span>
-            <ArrowUpRight
-              size={13}
-              strokeWidth={2}
-              aria-hidden="true"
-              className="transition-transform group-hover:-translate-y-px group-hover:translate-x-px"
-            />
-          </a>
         </div>
       </div>
     </header>
