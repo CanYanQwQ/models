@@ -80,10 +80,11 @@ npm run fonts     # 改过中文文案后重跑（见第 7 节）
 ### 来源
 
 `GET https://ai.zhouwanx.top/api/v1/model-plaza`（匿名可读，前提是后台开着模型广场）。
-最后一次抓取：**2026-10-18**，共 4 个分组 13 个模型：
+最后一次抓取：**2026-10-18 23:30**，共 5 个分组 25 个模型：
 
 | 分组 id | 名称 | kind | 倍率 | 倍率可信 | 模型 |
 | --- | --- | --- | --- | --- | --- |
+| 17 | CLAUDE稳定分组 | chat | 0.10 | 是 | claude-fable-5-1, claude-haiku-4-5-20251001, claude-opus-4-5-20251101, claude-opus-4-6, claude-opus-4-7, claude-opus-4-8, claude-opus-5, claude-opus-5-5, claude-sonnet-4-5-20250929, claude-sonnet-4-6, claude-sonnet-5, claude-sonnet-5-5 |
 | 16 | ChatGPT-ProMax【满血】 | chat | 0.17 | 是 | gpt-5.6, gpt-5.6-sol, gpt-6-astra, gpt-6-sol, gpt-6.1-sol |
 | 12 | GPT生图 | image | 1 | 是 | gpt-image-2 |
 | 6 | 国产模型 | chat | 1 | 否 | deepseek-v4-pro, deepseek-v4.1-flash, glm-5.3, glm-5.3-flash |
@@ -93,12 +94,13 @@ npm run fonts     # 改过中文文案后重跑（见第 7 节）
 
 - `groups[].name` / `description` → 组名与说明
 - `groups[].rate_multiplier` → `rateMultiplier`
-- `groups[].platform` → `platform`（本实例四组全是 `openai`，这是**协议族**不是厂商）
+- `groups[].platform` → `platform`（本实例有 `openai` 与 `anthropic` 两种，这是**协议族**不是厂商）
 - `models[].name` → `name`（slug，原样保留）
 - `models[].pricing.intervals[]` → `tiers[]`，其中 `input_price` / `output_price` /
   `cache_read_price` 是 per-token 美元价，`per_request_price` 是每张价，
   `tier_label` 是档位名（`≤272K` / `>272K` / `1K` / `2K` / `4K`）
-- `models[].long_context_basis` → 组 16 是 `whole_request`：超 272K 后**整单**按高价档
+- `models[].long_context_basis` → 组 16 是 `whole_request`：超 272K 后**整单**按高价档。
+  组 17 里只有 Claude Sonnet 4.5 分档（200K），同样是整单计价
 
 **没进页面的**：`official_pricing`（官方参考价）。使用者明确要求只显示售卖价，
 不并列官方价——官方价只用来判断倍率可不可信（见下）。
@@ -195,8 +197,8 @@ npm run fonts     # 改过中文文案后重跑（见第 7 节）
 
 - 拉丁与数字：Space Grotesk Variable（标题/正文）、JetBrains Mono Variable（数字/slug）
 - 中文：Noto Sans SC 子集，两个字重各一个文件
-  - `-400.woff2` 25.6 kB 正文、`-600.woff2` 26.0 kB 标题
-  - 只含页面实际用到的汉字（185 个），用 `unicode-range` 限在 CJK 区段
+  - `-400.woff2` 27.5 kB 正文、`-600.woff2` 27.9 kB 标题
+  - 只含页面实际用到的汉字（196 个），用 `unicode-range` 限在 CJK 区段
 - **必须两个字重**：只声明 600 会让所有中文正文比旁边的西文 400 更粗
 
 ### 版式四条硬规则
@@ -210,10 +212,26 @@ npm run fonts     # 改过中文文案后重跑（见第 7 节）
 
 一张卡 = 一张纸：`bg-sheet` + 1px `border-rule`，直角、无阴影、无渐变，hover 只把描边提到
 `border-rule-strong`。卡与卡 `gap-x-6 gap-y-5`。**每组各自一个网格**，所以模型数不是 3 的倍数时
-末行右侧留空位（13 个模型共 5 个空位）；让卡片跨组流动能填满，但会把两个分组排进一行，
+末行右侧留空位（25 个模型共 5 个空位）；让卡片跨组流动能填满，但会把两个分组排进一行，
 组头那个「×0.17」徽章就说不清覆盖哪几张卡了。
 
 实测卡片尺寸：1440 → 336px、1024 → 304px、640 → 276px、390 → 350px（单列）。
+
+### 标记（mark）
+
+左上角那个方块是手画的，不是图标库里的：两满行 + 一短行 + 一个实心格，就是「报价单上的一行
+价目」。五个文件同一套几何，只换颜色：
+
+| 文件 | 用途 |
+| --- | --- |
+| `public/favicon-mono.svg` | **当前使用的标签页图标**：黑底白图形，16px 下仍可辨 |
+| `public/favicon.svg` | 彩色版（teal 底），留给需要品牌色的场合 |
+| `public/mark-mono.svg` | 独立矢量，纯黑，给白底场合（README、PPT） |
+| `public/mark-mono-inverse.svg` | 独立矢量，纯白，给深底或照片上叠放 |
+| `public/mark.svg` | 独立矢量，teal |
+
+站内那一处也走单色（`TopBar.tsx` 里 `text-ink`）：teal 留给免费价与倍率徽章，标记如果也是
+teal 会分掉强调色的注意力。`src/components/Mark.tsx` 用的是 `currentColor`，改颜色只改外面。
 
 ### 响应式
 
@@ -243,7 +261,7 @@ npm run fonts
 **不重跑的后果**：新加的字掉回系统字体，同一句话里混两种设计。
 
 验证方法（可选）：用 Playwright 抓 `document.body.innerText`，再用 fontTools 读 cmap 比对，
-缺字为空串即通过。上一轮实测：页面出现 167 个汉字，185 个字的子集全部命中。
+缺字为空串即通过。上一轮实测：页面出现 165 个汉字，196 个字的子集全部命中。
 
 ---
 
@@ -311,15 +329,17 @@ npx vite build            # 参考：CSS ~24.8 kB (gzip 7.7) / JS ~243 kB (gzip 
 
 浏览器里过一遍：
 
-- [ ] 13 个模型区块、4 个分组
+- [ ] 25 个模型区块、5 个分组
 - [ ] 浅色 / 深色两套都正常（`?theme=dark` 直接可测）
 - [ ] 390px 宽无横向滚动（`document.documentElement.scrollWidth === 390`）
 - [ ] 四个字体面 loaded（含 `Sheet Display SC 400/600`）
 - [ ] 筛选：切分组只剩该组；搜索 `deepseek` 命中 4 行；无结果时出空态
-- [ ] 排序「价格从低到高」：免费 → 国产 → ChatGPT-ProMax → 生图
+- [ ] 排序「价格从低到高」：免费 → 国产 → CLAUDE → ChatGPT-ProMax → 生图
 - [ ] 零 console 报错、零 404 请求
 - [ ] 价格抽查：gpt-5.6 `$0.85 / $5.10 / $0.085`，`>272K` `$1.70 / $7.65 / $0.17`；
-      gpt-image-2 `$0.15 / $0.20 / $0.25`；glm-5.3-flash `$0.03 / $0.10 / $0.006`
+      gpt-image-2 `$0.15 / $0.20 / $0.25`；glm-5.3-flash `$0.03 / $0.10 / $0.006`；
+      claude-opus-4-5 `$0.50 / $2.50 / $0.05`；claude-sonnet-4-5 `$0.30 / $1.50 / $0.03`，
+      `>200K` `$0.60 / $2.25 / $0.06`
 
 ---
 
@@ -344,15 +364,34 @@ git remote -v
 git status -sb        # ## main...origin/main
 ```
 
-历史（5 个提交，从最早的落地页到当前版本）：
+当前 HEAD：`ffb1063 feat(catalog): add the CLAUDE stable group`
+最新 tag：**`v1.0.0`**（5 个分组 25 个模型的首个完整快照）
+
+历史（18 个提交，从最早的落地页到当前版本，倒序）：
 
 ```
+ffb1063 feat(catalog): add the CLAUDE stable group
+bcfced4 feat(mark): go monochrome
+31c2d29 feat(mark): draw the price-sheet mark and ship it as a tab icon
+0a0640f feat(plaza): drop the back-to-site link from the top bar
+c5ac525 Revert "feat(plaza): drop the page chrome when the sheet is framed"
+55567af Revert "docs(plaza): describe the ?embed=1 contract"
+afb4d66 Revert "feat(plaza): hand Escape back to the host overlay"
+576b58a feat(plaza): hand Escape back to the host overlay
+4a67c37 docs(plaza): describe the ?embed=1 contract
+a162f0d feat(plaza): drop the page chrome when the sheet is framed
+9c47d8f fix(plaza): close each group header with a hairline
+99164cd feat(plaza): set each model as a card, three to a row
+84c27d5 docs: hand the project over in one file
 4614999 docs(plaza): point the deployment notes at the standalone repo
 e54e0da feat(plaza): filter by platform, group and rate, and sort by price
 cc01874 style(plaza): lay the sheet out as a model-by-model list
 c2ad60b docs(plaza): show the sheet in both themes and on a phone
 87fca0d feat(plaza): a printed tariff sheet for the model catalogue
 ```
+
+`?embed=1`（无顶栏嵌入模式）**已经全部回退**——它只服务过首页那个浮层，浮层方案后来放弃了。
+现在页面永远是完整形态，`isEmbedded()` 这类判断已经不存在，不要再按「可嵌入」去改。
 
 这个项目曾经是另一个仓库 `sub2api-pages` 里的 `plaza/` 子目录，用 `git subtree split`
 拆出来独立，历史完整保留。**那个仓库里的副本已经删除**，不要再去那里找代码。
